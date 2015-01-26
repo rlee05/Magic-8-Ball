@@ -1,5 +1,6 @@
 /*MAGIC 8 BALL - MAIN ACTIVITY (WEARABLE)*/
-/*Last updated: January 22, 2015*/
+/*Last updated: January 26, 2015*/
+/*SensorListener code modified from http://stackoverflow.com/questions/5271448/how-to-detect-shake-event-with-android*/
 
 package com.example.rachel.magic8ball;
 
@@ -19,17 +20,34 @@ public class MainActivityWear extends Activity implements SensorEventListener{
 
     private long lastUpdate = 0;
     private static final int SHAKE_THRESHOLD = 600;
+    private float last_x = 0;
+    private float last_y = 0;
+    private float last_z = 0;
 
     @Override
     public void onSensorChanged(SensorEvent event) {
         Sensor mySensor = event.sensor;
         long curTime = event.timestamp;
 
-        if (curTime-lastUpdate>SHAKE_THRESHOLD && mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+        if (curTime-lastUpdate>200 && mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            long deltaTime = curTime-lastUpdate;
+            lastUpdate = curTime;
+
             float x = event.values[0];
             float y = event.values[0];
             float z = event.values[0];
+
+            float speed = Math.abs(x + y + z - last_x - last_y - last_z) / deltaTime * 10000;
+
+            if (speed > SHAKE_THRESHOLD) {
+
+            }
+
+            last_x = x;
+            last_y = y;
+            last_z = z;
         }
+
     }
 
     @Override
